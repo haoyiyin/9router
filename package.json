@@ -1,6 +1,6 @@
 {
   "name": "@haoyiyin/9router",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "main": "src/index.ts",
   "description": "Pi extension — 9Router provider (OpenCode Free oc/-free models + router models) + fetch/search/transcribe tools",
