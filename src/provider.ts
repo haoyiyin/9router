@@ -214,8 +214,10 @@ export async function registerProvider(pi: ExtensionAPI): Promise<void> {
 	const cfg = loadConfig();
 	const oauth = makeOAuth(pi);
 
-	if (!cfg.apiKey) {
+	if (!cfg.baseUrl || !cfg.apiKey) {
 		// Register shell provider so /login can configure it; no models yet.
+		// Missing base URL must be treated like missing credentials: otherwise
+		// model discovery builds an invalid relative URL and aborts Pi startup.
 		pi.registerProvider("9router", {
 			name: "9Router",
 			api: "openai-completions",

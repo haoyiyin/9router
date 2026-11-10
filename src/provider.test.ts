@@ -57,7 +57,7 @@ beforeAll(async () => {
 
 	ROUTER_CACHE = join(data.CACHE_DIR, "9router.json");
 	ZEN_CACHE = cachePath();
-	ROUTER_MODELS_URL = `${config.DEFAULT_BASE}/models`;
+		ROUTER_MODELS_URL = "https://router.test/models";
 });
 
 afterAll(() => {
@@ -394,6 +394,7 @@ describe("registerProvider", () => {
 	beforeEach(() => {
 		registered = null;
 		delete process.env.ROUTER_API_BASE;
+		process.env.ROUTER_API_BASE = "https://router.test";
 		pi = {
 			registerProvider: mock((name: string, cfg: { models: unknown[] }) => {
 				registered = { name, cfg };
@@ -505,6 +506,17 @@ describe("registerProvider", () => {
 		const free = models.find((m) => m.id === "free");
 		expect(free?.reasoning).toBe(true);
 		expect(free?.thinkingLevelMap).toEqual({ xhigh: "xhigh", max: "max" });
+	});
+
+	it("registers an empty model list (shell provider) when base URL is empty", async () => {
+		process.env.ROUTER_API_KEY = "test-key";
+		delete process.env.ROUTER_API_BASE;
+		// Empty base URL is a valid cleared config; startup must not fetch a
+		// relative /models URL or throw before /login can configure the plugin.
+		await registerProvider(pi as unknown as Parameters<typeof registerProvider>[0]);
+
+		expect(registered?.name).toBe("9router");
+		expect(registered?.cfg.models).toEqual([]);
 	});
 
 	it("registers an empty model list (shell provider) when no api key is set", async () => {
